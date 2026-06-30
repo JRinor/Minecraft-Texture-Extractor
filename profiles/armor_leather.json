@@ -1,0 +1,21 @@
+{
+  "id": "armor_leather",
+  "type": "set",
+  "display_name": "Leather Armor",
+  "output_prefix": "armor_leather",
+  "pack_description": "Leather armor (icons + overlays + worn layers)",
+  "candidates": [
+    "leather_chestplate.png"
+  ],
+  "companions": [
+    "leather_helmet.png",
+    "leather_leggings.png",
+    "leather_boots.png",
+    "leather_helmet_overlay.png",
+    "leather_chestplate_overlay.png",
+    "leather_leggings_overlay.png",
+    "leather_boots_overlay.png",
+    "minecraft/textures/models/armor/leather_layer_*.png"
+  ],
+  "path_hints": ["item"]
+}

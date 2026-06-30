@@ -1,0 +1,11 @@
+{
+  "id": "ender_pearl",
+  "type": "simple",
+  "display_name": "Ender Pearl",
+  "output_prefix": "ender_pearl",
+  "pack_description": "Ender Pearl overlay",
+  "candidates": [
+    "ender_pearl.png"
+  ],
+  "path_hints": ["item"]
+}

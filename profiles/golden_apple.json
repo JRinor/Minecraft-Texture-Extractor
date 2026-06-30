@@ -1,0 +1,16 @@
+{
+  "id": "golden_apple",
+  "type": "set",
+  "display_name": "Golden Apple",
+  "output_prefix": "golden_apple",
+  "pack_description": "Golden apple overlay (normal + enchanted)",
+  "candidates": [
+    "apple_golden.png",
+    "golden_apple.png"
+  ],
+  "companions": [
+    "enchanted_golden_apple.png",
+    "apple_golden_enchanted.png"
+  ],
+  "path_hints": ["item"]
+}

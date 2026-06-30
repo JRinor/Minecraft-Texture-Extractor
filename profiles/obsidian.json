@@ -1,0 +1,11 @@
+{
+  "id": "obsidian",
+  "type": "simple",
+  "display_name": "Obsidian",
+  "output_prefix": "obsidian",
+  "pack_description": "Obsidian block overlay",
+  "candidates": [
+    "obsidian.png"
+  ],
+  "path_hints": ["block"]
+}

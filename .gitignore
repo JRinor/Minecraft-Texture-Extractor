@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.log
+report.csv
+pack_folder_*/
+
+# Données locales (packs sources/générés, dossier d'exemple volumineux) — non versionnées
+exemple texture pack/
+packs_source/
+packs_generes/

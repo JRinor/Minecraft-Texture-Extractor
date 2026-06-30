@@ -1,0 +1,9 @@
+{
+  "id": "sky",
+  "type": "group",
+  "display_name": "Sky Overlay",
+  "output_prefix": "sky",
+  "pack_description": "Sky overlay (Optifine/MCPatcher)",
+  "anchor_glob": "minecraft/mcpatcher/sky/world*/*.properties",
+  "reference_keys": ["source"]
+}

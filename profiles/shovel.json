@@ -1,0 +1,23 @@
+{
+  "id": "shovel",
+  "type": "simple",
+  "display_name": "Shovel",
+  "output_prefix": "shovel",
+  "pack_description": "Shovel overlay",
+  "candidates": [
+    "diamond_shovel.png",
+    "iron_shovel.png",
+    "gold_shovel.png",
+    "golden_shovel.png",
+    "stone_shovel.png",
+    "wood_shovel.png",
+    "wooden_shovel.png",
+    "netherite_shovel.png",
+    "diamond_spade.png",
+    "iron_spade.png",
+    "gold_spade.png",
+    "stone_spade.png",
+    "wood_spade.png"
+  ],
+  "path_hints": ["item"]
+}

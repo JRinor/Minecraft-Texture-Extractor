@@ -1,0 +1,11 @@
+{
+  "id": "sword",
+  "type": "simple",
+  "display_name": "Diamond Sword",
+  "output_prefix": "sword",
+  "pack_description": "Diamond Sword overlay",
+  "candidates": [
+    "diamond_sword.png"
+  ],
+  "path_hints": ["item"]
+}

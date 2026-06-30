@@ -1,0 +1,14 @@
+{
+  "id": "gui",
+  "type": "set",
+  "display_name": "GUI / HUD",
+  "output_prefix": "gui",
+  "pack_description": "GUI overlay (HUD icons + hotbar widgets)",
+  "candidates": [
+    "icons.png"
+  ],
+  "companions": [
+    "widgets.png"
+  ],
+  "path_hints": ["gui"]
+}

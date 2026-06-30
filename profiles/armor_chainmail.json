@@ -1,0 +1,17 @@
+{
+  "id": "armor_chainmail",
+  "type": "set",
+  "display_name": "Chainmail Armor",
+  "output_prefix": "armor_chainmail",
+  "pack_description": "Chainmail armor (icons + worn layers)",
+  "candidates": [
+    "chainmail_chestplate.png"
+  ],
+  "companions": [
+    "chainmail_helmet.png",
+    "chainmail_leggings.png",
+    "chainmail_boots.png",
+    "minecraft/textures/models/armor/chainmail_layer_*.png"
+  ],
+  "path_hints": ["item"]
+}

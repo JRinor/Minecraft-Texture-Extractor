@@ -1,0 +1,11 @@
+{
+  "id": "arrow",
+  "type": "simple",
+  "display_name": "Arrow",
+  "output_prefix": "arrow",
+  "pack_description": "Arrow overlay",
+  "candidates": [
+    "arrow.png"
+  ],
+  "path_hints": ["item"]
+}

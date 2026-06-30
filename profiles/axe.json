@@ -1,0 +1,18 @@
+{
+  "id": "axe",
+  "type": "simple",
+  "display_name": "Axe",
+  "output_prefix": "axe",
+  "pack_description": "Axe overlay",
+  "candidates": [
+    "diamond_axe.png",
+    "iron_axe.png",
+    "gold_axe.png",
+    "golden_axe.png",
+    "stone_axe.png",
+    "wood_axe.png",
+    "wooden_axe.png",
+    "netherite_axe.png"
+  ],
+  "path_hints": ["item"]
+}

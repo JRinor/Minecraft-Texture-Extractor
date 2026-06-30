@@ -1,0 +1,18 @@
+{
+  "id": "hoe",
+  "type": "simple",
+  "display_name": "Hoe",
+  "output_prefix": "hoe",
+  "pack_description": "Hoe overlay",
+  "candidates": [
+    "diamond_hoe.png",
+    "iron_hoe.png",
+    "gold_hoe.png",
+    "golden_hoe.png",
+    "stone_hoe.png",
+    "wood_hoe.png",
+    "wooden_hoe.png",
+    "netherite_hoe.png"
+  ],
+  "path_hints": ["item"]
+}

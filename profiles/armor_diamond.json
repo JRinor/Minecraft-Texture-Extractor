@@ -1,0 +1,17 @@
+{
+  "id": "armor_diamond",
+  "type": "set",
+  "display_name": "Diamond Armor",
+  "output_prefix": "armor_diamond",
+  "pack_description": "Diamond armor (icons + worn layers)",
+  "candidates": [
+    "diamond_chestplate.png"
+  ],
+  "companions": [
+    "diamond_helmet.png",
+    "diamond_leggings.png",
+    "diamond_boots.png",
+    "minecraft/textures/models/armor/diamond_layer_*.png"
+  ],
+  "path_hints": ["item"]
+}

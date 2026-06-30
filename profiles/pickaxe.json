@@ -1,0 +1,18 @@
+{
+  "id": "pickaxe",
+  "type": "simple",
+  "display_name": "Pickaxe",
+  "output_prefix": "pickaxe",
+  "pack_description": "Pickaxe overlay",
+  "candidates": [
+    "diamond_pickaxe.png",
+    "iron_pickaxe.png",
+    "gold_pickaxe.png",
+    "golden_pickaxe.png",
+    "stone_pickaxe.png",
+    "wood_pickaxe.png",
+    "wooden_pickaxe.png",
+    "netherite_pickaxe.png"
+  ],
+  "path_hints": ["item"]
+}

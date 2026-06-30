@@ -1,0 +1,19 @@
+{
+  "id": "potion",
+  "type": "set",
+  "display_name": "Potion",
+  "output_prefix": "potion",
+  "pack_description": "Potion overlay (all bottle types + overlay)",
+  "candidates": [
+    "potion_bottle_drinkable.png",
+    "potion.png"
+  ],
+  "companions": [
+    "potion_bottle_splash.png",
+    "potion_bottle_empty.png",
+    "potion_overlay.png",
+    "splash_potion.png",
+    "lingering_potion.png"
+  ],
+  "path_hints": ["item"]
+}

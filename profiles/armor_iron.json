@@ -1,0 +1,17 @@
+{
+  "id": "armor_iron",
+  "type": "set",
+  "display_name": "Iron Armor",
+  "output_prefix": "armor_iron",
+  "pack_description": "Iron armor (icons + worn layers)",
+  "candidates": [
+    "iron_chestplate.png"
+  ],
+  "companions": [
+    "iron_helmet.png",
+    "iron_leggings.png",
+    "iron_boots.png",
+    "minecraft/textures/models/armor/iron_layer_*.png"
+  ],
+  "path_hints": ["item"]
+}

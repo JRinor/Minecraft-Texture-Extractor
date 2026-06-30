@@ -1,0 +1,17 @@
+{
+  "id": "bow",
+  "type": "set",
+  "display_name": "Bow",
+  "output_prefix": "bow",
+  "pack_description": "Bow overlay (standby + pulling)",
+  "candidates": [
+    "bow_standby.png",
+    "bow.png"
+  ],
+  "companions": [
+    "bow_pulling_0.png",
+    "bow_pulling_1.png",
+    "bow_pulling_2.png"
+  ],
+  "path_hints": ["item"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "fishing_rod",
+  "type": "set",
+  "display_name": "Fishing Rod",
+  "output_prefix": "fishing_rod",
+  "pack_description": "Fishing rod overlay (uncast + cast)",
+  "candidates": [
+    "fishing_rod_uncast.png",
+    "fishing_rod.png"
+  ],
+  "companions": [
+    "fishing_rod_cast.png"
+  ],
+  "path_hints": ["item"]
+}

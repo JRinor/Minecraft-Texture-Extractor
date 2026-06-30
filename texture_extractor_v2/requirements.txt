@@ -1,0 +1,9 @@
+Pillow>=10.0
+rarfile>=4.0
+py7zr>=0.21
+
+# Notes :
+# - rarfile nécessite l'utilitaire "unrar" (ou "unar") installé sur le système.
+# - py7zr est uniquement nécessaire pour les archives .7z.
+# - Si l'un de ces deux modules n'est pas installé, le script l'ignore et
+#   saute simplement les archives du format correspondant (avec un avertissement).

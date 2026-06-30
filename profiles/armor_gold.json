@@ -1,0 +1,22 @@
+{
+  "id": "armor_gold",
+  "type": "set",
+  "display_name": "Gold Armor",
+  "output_prefix": "armor_gold",
+  "pack_description": "Gold armor (icons + worn layers)",
+  "candidates": [
+    "gold_chestplate.png",
+    "golden_chestplate.png"
+  ],
+  "companions": [
+    "gold_helmet.png",
+    "gold_leggings.png",
+    "gold_boots.png",
+    "golden_helmet.png",
+    "golden_leggings.png",
+    "golden_boots.png",
+    "minecraft/textures/models/armor/gold_layer_*.png",
+    "minecraft/textures/models/armor/golden_layer_*.png"
+  ],
+  "path_hints": ["item"]
+}
