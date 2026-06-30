@@ -21,7 +21,19 @@ pip install -r texture_extractor_v2/requirements.txt
 
 Si `rarfile` ou `py7zr` ne sont pas installés, le script continue de fonctionner normalement mais ignore (avec un avertissement) les archives du format correspondant.
 
-### Utilisation
+### Interface graphique (le plus simple)
+
+Pour ne pas taper de commandes, lance l'application :
+
+```
+python gui.py
+```
+
+(ou double-clic sur **`lancer_gui.bat`** sous Windows)
+
+La fenêtre permet de choisir le dossier source et le dossier de sortie, cocher les items à extraire, régler les options (threads, mode combiné…) et suivre les logs en direct. Aucune dépendance supplémentaire (Tkinter est inclus avec Python).
+
+### Utilisation en ligne de commande
 
 ```
 python texture_extractor_v2/run.py --source "chemin/vers/tes/packs" --profiles sword sky
@@ -39,6 +51,19 @@ Arguments principaux :
 | `--workers` | Nombre de threads pour traiter plusieurs packs en parallèle (défaut : 8). |
 | `-v` / `--verbose` | Logs détaillés. |
 | `--log-file` | Écrit aussi les logs dans un fichier. |
+| `--combine` | **Mode combiné** : fusionne tous les profils sélectionnés en UN seul pack par pack source (voir ci-dessous). |
+| `--combine-name` | Nom du combo (dossier `pack_folder_<nom>` et préfixe des zips). Défaut : `combo`. |
+| `--combine-require-all` | En mode combiné, ne produit un pack que si TOUS les profils sélectionnés sont présents dans le pack source. |
+
+### Mode combiné
+
+Par défaut, chaque profil produit son propre dossier (`pack_folder_sword/`, `pack_folder_bow/`…) avec un zip par item. Le **mode combiné** (`--combine`) réunit au contraire plusieurs items dans un **seul** resource pack par pack source — par exemple l'épée *et* l'arc d'un même pack ensemble :
+
+```
+python texture_extractor_v2/run.py --source "packs_source" --profiles sword bow --combine --combine-name sword_bow --dest-root "packs_generes"
+```
+
+Produit `pack_folder_sword_bow/sword_bow_1.zip`, `sword_bow_2.zip`… chacun contenant à la fois l'épée et les textures d'arc du pack source correspondant. Le dédoublonnage se fait sur le **contenu combiné** (deux packs sources donnant exactement le même épée+arc ne sont exportés qu'une fois). Ajoute `--combine-require-all` pour ne garder que les packs qui possèdent **tous** les items demandés.
 
 ### Ce que ça produit
 
