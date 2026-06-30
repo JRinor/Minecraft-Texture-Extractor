@@ -19,6 +19,7 @@ from models import MatchUnit
 logger = logging.getLogger(__name__)
 
 ICON_SIZE = (64, 64)
+DEFAULT_PACK_FORMAT = 1  # 1.8 (utilisé si le pack source n'indique pas de format)
 
 
 def _build_pack_png(icon_bytes: bytes) -> bytes | None:
@@ -34,20 +35,29 @@ def _build_pack_png(icon_bytes: bytes) -> bytes | None:
         return None
 
 
-def package_unit(unit: MatchUnit, counter: int, dest_dir: Path) -> Path:
+def package_unit(unit: MatchUnit, counter: int, dest_dir: Path, keep_original: bool = False) -> Path:
     dest_dir.mkdir(parents=True, exist_ok=True)
+
+    description = unit.profile.pack_description
+    if keep_original and unit.source_description:
+        description = unit.source_description
 
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zf:
         mcmeta = {
             "pack": {
-                "pack_format": 1,
-                "description": unit.profile.pack_description,
+                "pack_format": unit.pack_format or DEFAULT_PACK_FORMAT,
+                "description": description,
             }
         }
         zf.writestr("pack.mcmeta", json.dumps(mcmeta, ensure_ascii=False, indent=2))
 
-        pack_png = _build_pack_png(unit.icon_file.data)
+        # Icône : pack.png d'origine si demandé et disponible, sinon générée à
+        # partir de l'item.
+        icon_source = unit.source_icon_data if (keep_original and unit.source_icon_data) else unit.icon_file.data
+        pack_png = _build_pack_png(icon_source)
+        if pack_png is None and keep_original and unit.source_icon_data:
+            pack_png = _build_pack_png(unit.icon_file.data)  # repli sur l'icône item
         if pack_png is not None:
             zf.writestr("pack.png", pack_png)
 

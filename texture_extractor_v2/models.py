@@ -111,6 +111,13 @@ class MatchUnit:
     files: list[FoundFile]
     # Fichier à utiliser comme base du pack.png (icône).
     icon_file: FoundFile
+    # --- Métadonnées du pack source (renseignées par l'orchestrateur) ---
+    # pack_format lu dans le pack.mcmeta du pack source (None si introuvable).
+    pack_format: Optional[int] = None
+    # pack.png d'origine du pack source (bytes), si on veut le conserver.
+    source_icon_data: Optional[bytes] = None
+    # Description d'origine lue dans le pack.mcmeta du pack source.
+    source_description: Optional[str] = None
 
 
 def normalize_name(name: str) -> str:

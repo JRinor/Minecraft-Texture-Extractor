@@ -31,7 +31,36 @@ python gui.py
 
 (ou double-clic sur **`lancer_gui.bat`** sous Windows)
 
-La fenêtre permet de choisir le dossier source et le dossier de sortie, cocher les items à extraire, régler les options (threads, mode combiné…) et suivre les logs en direct. Aucune dépendance supplémentaire (Tkinter est inclus avec Python).
+L'interface est organisée en **3 étapes** : 1) dossier des packs, 2) items à cocher (rangés par catégorie, noms en français), 3) bouton **Extraire**. Elle propose notamment :
+
+- **glisser-déposer** d'un dossier sur le champ source, **compteur d'éléments** détectés en direct, bouton pour ouvrir le dossier source ;
+- des **presets** en un clic (`Items PvP`, `Outils`, `Armures`) et tout cocher / décocher ;
+- un bouton **🔎 Analyser** : compte les packs et les items présents **sans rien créer** ;
+- des **combos** (plusieurs items réunis dans un seul pack), plusieurs possibles ;
+- des options claires : planche-contact, garder l'icône/nom d'origine, **vider le dossier avant**, **ouvrir le dossier à la fin**, mode test (dry-run), vitesse ;
+- **progression** (barre + nom du pack en cours) et **récapitulatif** (créés / doublons / erreurs par item) ;
+- ouverture du dossier de sortie, du **rapport CSV**, ou **aperçu des icônes** (planche-contact) ;
+- **raccourcis** : `Ctrl+Entrée` pour lancer, `Échap` pour arrêter ;
+- vérification au démarrage : si **Pillow** manque, l'app propose de l'installer.
+
+L'onglet **Profils (avancé)** permet de créer / modifier / supprimer des profils, soit via un **formulaire guidé**, soit en éditant le JSON. Les réglages (y compris la taille de fenêtre) sont **mémorisés** entre deux lancements (`gui_config.json`).
+
+Dépendances : Tkinter est inclus avec Python ; Pillow est déjà requis par l'extracteur. Le **glisser-déposer** utilise `tkinterdnd2` (optionnel — sans lui, tout fonctionne sauf le drag & drop) :
+
+```
+pip install tkinterdnd2
+```
+
+### Exécutable autonome (.exe, sans Python)
+
+Pour lancer/partager l'app **sans installer Python ni taper de commande**, génère un exécutable :
+
+```
+pip install pyinstaller
+build_exe.bat
+```
+
+L'exécutable est créé dans `dist\MinecraftTextureExtractor.exe` (double-clic pour lancer). Les profils sont copiés à côté de l'exe au premier lancement et restent **modifiables** (onglet Profils).
 
 ### Utilisation en ligne de commande
 
@@ -51,29 +80,37 @@ Arguments principaux :
 | `--workers` | Nombre de threads pour traiter plusieurs packs en parallèle (défaut : 8). |
 | `-v` / `--verbose` | Logs détaillés. |
 | `--log-file` | Écrit aussi les logs dans un fichier. |
-| `--combine` | **Mode combiné** : fusionne tous les profils sélectionnés en UN seul pack par pack source (voir ci-dessous). |
-| `--combine-name` | Nom du combo (dossier `pack_folder_<nom>` et préfixe des zips). Défaut : `combo`. |
-| `--combine-require-all` | En mode combiné, ne produit un pack que si TOUS les profils sélectionnés sont présents dans le pack source. |
+| `--combo` | **Combo** : fusionne plusieurs profils en un seul pack. Format `nom=profil1,profil2`. Répétable (plusieurs combos). |
+| `--combo-require-all` | Pour les combos : ne produit un pack que si TOUS les profils du combo sont présents dans le pack source. |
+| `--dry-run` | Aperçu : compte ce qui serait extrait sans rien écrire sur le disque. |
+| `--keep-original` | Conserve le `pack.png` et la description d'origine du pack source au lieu de les générer. |
+| `--contact-sheet` | Génère une planche-contact (`contact_sheet.png`) des icônes dans chaque dossier de sortie. |
 
-### Mode combiné
+### Combos (plusieurs items dans un seul pack)
 
-Par défaut, chaque profil produit son propre dossier (`pack_folder_sword/`, `pack_folder_bow/`…) avec un zip par item. Le **mode combiné** (`--combine`) réunit au contraire plusieurs items dans un **seul** resource pack par pack source — par exemple l'épée *et* l'arc d'un même pack ensemble :
+Par défaut, chaque profil produit son propre dossier (`pack_folder_sword/`, `pack_folder_bow/`…) avec un zip par item. Un **combo** réunit au contraire plusieurs items dans un **seul** resource pack par pack source — par exemple l'épée *et* l'arc d'un même pack ensemble. On peut définir **plusieurs combos** en un seul lancement, et les combiner avec des profils séparés :
 
 ```
-python texture_extractor_v2/run.py --source "packs_source" --profiles sword bow --combine --combine-name sword_bow --dest-root "packs_generes"
+python texture_extractor_v2/run.py --source "packs_source" \
+  --profiles sky \
+  --combo "sword_bow=sword,bow" \
+  --combo "pvp=sword,bow,potion,golden_apple" \
+  --dest-root "packs_generes"
 ```
 
-Produit `pack_folder_sword_bow/sword_bow_1.zip`, `sword_bow_2.zip`… chacun contenant à la fois l'épée et les textures d'arc du pack source correspondant. Le dédoublonnage se fait sur le **contenu combiné** (deux packs sources donnant exactement le même épée+arc ne sont exportés qu'une fois). Ajoute `--combine-require-all` pour ne garder que les packs qui possèdent **tous** les items demandés.
+Chaque combo produit `pack_folder_<nom>/<nom>_1.zip`, `<nom>_2.zip`… contenant tous les items du combo trouvés dans le pack source. Le dédoublonnage se fait sur le **contenu combiné** (deux packs sources donnant exactement le même contenu ne sont exportés qu'une fois). Ajoute `--combo-require-all` pour ne garder que les packs qui possèdent **tous** les items du combo.
 
 ### Ce que ça produit
 
 Pour chaque profil demandé, un dossier `pack_folder_<id>/` est créé contenant un `.zip` par item unique trouvé (ex: `sword_1.zip`, `sword_2.zip`...). Chaque zip est un resource pack autonome :
 
 ```
-pack.mcmeta
-pack.png                          <- icône générée à partir de l'item (64x64)
-assets/minecraft/...               <- le(s) fichier(s) de l'item, au chemin d'origine du pack source
+pack.mcmeta                        <- pack_format repris du pack source, description du profil (ou d'origine avec --keep-original)
+pack.png                          <- icône générée à partir de l'item (64x64), ou pack.png d'origine avec --keep-original
+assets/minecraft/...               <- le(s) fichier(s) de l'item + leurs .mcmeta d'animation, au chemin d'origine du pack source
 ```
+
+Les fichiers d'animation `.mcmeta` voisins d'une texture (ex: `potion_overlay.png.mcmeta`) sont **automatiquement inclus** pour ne pas casser les textures animées. Le `pack_format` est lu dans le `pack.mcmeta` du pack source pour rester compatible avec la bonne version de Minecraft. Avec `--contact-sheet`, un `contact_sheet.png` (montage de toutes les icônes) est ajouté dans chaque dossier de sortie.
 
 Un `report.csv` liste, pour chaque item rencontré : le pack source, le statut (`exported` / `duplicate` / `error`), le zip de sortie et le hash de contenu.
 
@@ -169,11 +206,14 @@ Les noms de fichiers couvrent les conventions 1.8 (`items/`, `gold_`, `wood_`, `
 |---|---|
 | `models.py` | Dataclasses (`ItemProfile`, `FoundFile`, `MatchUnit`...). |
 | `profile_loader.py` | Chargement/validation des profils JSON. |
-| `pack_discovery.py` | Détection des packs dans le dossier source (dossiers, zip, rar, 7z, archives imbriquées) derrière une interface unifiée (`PackHandle`). |
-| `matcher.py` | Recherche des items dans un pack, pour les profils `simple`, `set` et `group`. |
+| `pack_discovery.py` | Détection des packs (dossiers, zip, rar, 7z, archives imbriquées) derrière une interface unifiée (`PackHandle`) ; lit aussi les métadonnées du pack source (`pack_format`, description, `pack.png`). |
+| `matcher.py` | Recherche des items dans un pack (profils `simple`, `set`, `group`) et ajoute les `.mcmeta` d'animation voisins. |
 | `dedupe.py` | Hash et détection de doublons, thread-safe. |
 | `packager.py` | Construction du zip de sortie (pack.mcmeta, pack.png, fichiers). |
+| `contact_sheet.py` | Génération de la planche-contact (montage PNG des icônes) d'un dossier de sortie. |
 | `reporter.py` | Rapport CSV. |
-| `run.py` | CLI, orchestration, parallélisation. |
+| `run.py` | CLI, orchestration, parallélisation (profils séparés + combos, dry-run, keep-original, planche-contact). |
+
+L'application graphique [`gui.py`](gui.py) (racine du repo) pilote `run.py` et ajoute la mémorisation des réglages, la progression, le récapitulatif et un éditeur de profils.
 
 Un "pack" est détecté n'importe où dans l'arborescence source (dossier ou archive) dès qu'il contient un dossier `assets/` ou un `pack.mcmeta` — peu importe la profondeur d'imbrication (ex: une archive `.rar` qui contient elle-même plusieurs `.zip`, chacun étant un pack distinct).

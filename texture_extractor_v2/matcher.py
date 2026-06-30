@@ -220,11 +220,39 @@ def match_group(profile: ItemProfile, pack: PackHandle) -> list[MatchUnit]:
     return units
 
 
+def _attach_sidecar_mcmeta(units: list[MatchUnit], pack: PackHandle) -> None:
+    """Ajoute, pour chaque fichier d'une unité, son fichier ``.mcmeta`` voisin
+    s'il existe (ex: ``potion_overlay.png`` -> ``potion_overlay.png.mcmeta``).
+    Indispensable aux textures animées : sans leur ``.mcmeta``, l'animation
+    est perdue en jeu."""
+    if not units:
+        return
+    lookup = {p.lower(): p for p in pack.list_rel_paths()}
+    for unit in units:
+        existing = {f.rel_path for f in unit.files}
+        extra: list[FoundFile] = []
+        for found in list(unit.files):
+            if found.rel_path.lower().endswith(".mcmeta"):
+                continue
+            actual = lookup.get((found.rel_path + ".mcmeta").lower())
+            if actual and actual not in existing:
+                try:
+                    extra.append(FoundFile(rel_path=actual, data=pack.read(actual)))
+                    existing.add(actual)
+                except Exception as exc:
+                    logger.warning("Lecture impossible de %s dans %s : %s", actual, pack.label, exc)
+        unit.files.extend(extra)
+
+
 def find_matches(profile: ItemProfile, pack: PackHandle) -> list[MatchUnit]:
     if profile.is_simple():
-        return match_simple(profile, pack)
-    if profile.is_set():
-        return match_set(profile, pack)
-    if profile.is_group():
-        return match_group(profile, pack)
-    raise ValueError(f"Type de profil inconnu : {profile.type}")
+        units = match_simple(profile, pack)
+    elif profile.is_set():
+        units = match_set(profile, pack)
+    elif profile.is_group():
+        units = match_group(profile, pack)
+    else:
+        raise ValueError(f"Type de profil inconnu : {profile.type}")
+
+    _attach_sidecar_mcmeta(units, pack)
+    return units

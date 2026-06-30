@@ -8,3 +8,11 @@ pack_folder_*/
 exemple texture pack/
 packs_source/
 packs_generes/
+
+# Réglages locaux de la GUI
+gui_config.json
+
+# Artefacts de build PyInstaller (.exe)
+build/
+dist/
+*.spec

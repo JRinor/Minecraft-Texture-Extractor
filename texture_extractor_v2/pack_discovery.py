@@ -11,6 +11,7 @@ archive qui ne contient que d'autres dossiers/archives (un simple
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import tempfile
@@ -70,6 +71,15 @@ def has_pack_markers(names: list[str]) -> bool:
 
 def is_archive(path: str) -> bool:
     return path.lower().endswith(ARCHIVE_EXTENSIONS)
+
+
+@dataclass
+class SourceMeta:
+    """Métadonnées lues dans le pack source (pack.mcmeta + pack.png)."""
+
+    pack_format: Optional[int] = None
+    description: Optional[str] = None
+    icon_data: Optional[bytes] = None
 
 
 @dataclass
@@ -186,11 +196,16 @@ class PackHandle:
     """Vue unifiée d'un pack : accès aux fichiers par chemin relatif à
     "assets/" (le chemin retourné inclut le préfixe "assets/")."""
 
-    def __init__(self, label: str, backend: ArchiveBackend, assets_files: dict[str, str]):
+    def __init__(self, label: str, backend: ArchiveBackend, assets_files: dict[str, str],
+                 pack_mcmeta_raw: Optional[str] = None, pack_png_raw: Optional[str] = None):
         self.label = label
         self._backend = backend
         # rel_path ("assets/minecraft/...") -> raw_path dans le backend
         self._assets_files = assets_files
+        # raw_path du pack.mcmeta / pack.png racine du pack source (s'ils existent)
+        self._pack_mcmeta_raw = pack_mcmeta_raw
+        self._pack_png_raw = pack_png_raw
+        self._source_meta: Optional[SourceMeta] = None
 
     def list_rel_paths(self) -> list[str]:
         return list(self._assets_files.keys())
@@ -198,6 +213,33 @@ class PackHandle:
     def read(self, rel_path: str) -> bytes:
         raw_path = self._assets_files[rel_path]
         return self._backend.read(raw_path)
+
+    def source_meta(self) -> SourceMeta:
+        """Lit (et met en cache) les métadonnées du pack source : pack_format
+        et description depuis pack.mcmeta, icône depuis pack.png. Les champs
+        absents/illisibles restent à None."""
+        if self._source_meta is not None:
+            return self._source_meta
+        meta = SourceMeta()
+        if self._pack_mcmeta_raw is not None:
+            try:
+                data = self._backend.read(self._pack_mcmeta_raw)
+                parsed = json.loads(data.decode("utf-8", errors="ignore"))
+                pack = parsed.get("pack", {})
+                if "pack_format" in pack:
+                    meta.pack_format = int(pack["pack_format"])
+                desc = pack.get("description")
+                if isinstance(desc, str):
+                    meta.description = desc
+            except Exception:
+                pass
+        if self._pack_png_raw is not None:
+            try:
+                meta.icon_data = self._backend.read(self._pack_png_raw)
+            except Exception:
+                pass
+        self._source_meta = meta
+        return meta
 
     def close(self) -> None:
         self._backend.close()
@@ -212,11 +254,22 @@ class PackHandle:
 def _build_pack_handle(label: str, backend: ArchiveBackend) -> PackHandle:
     entries = [e for e in backend.list_entries() if not e.is_dir]
     assets_files: dict[str, str] = {}
+    pack_mcmeta_raw: Optional[str] = None
+    pack_png_raw: Optional[str] = None
     for entry in entries:
         rel = find_assets_relpath(entry.raw_path)
         if rel is not None:
             assets_files[rel] = entry.raw_path
-    return PackHandle(label=label, backend=backend, assets_files=assets_files)
+        norm = _norm(entry.raw_path).lower()
+        # On garde le pack.mcmeta / pack.png le plus proche de la racine.
+        if norm == "pack.mcmeta" or norm.endswith("/pack.mcmeta"):
+            if pack_mcmeta_raw is None or len(entry.raw_path) < len(pack_mcmeta_raw):
+                pack_mcmeta_raw = entry.raw_path
+        elif norm == "pack.png" or norm.endswith("/pack.png"):
+            if pack_png_raw is None or len(entry.raw_path) < len(pack_png_raw):
+                pack_png_raw = entry.raw_path
+    return PackHandle(label=label, backend=backend, assets_files=assets_files,
+                      pack_mcmeta_raw=pack_mcmeta_raw, pack_png_raw=pack_png_raw)
 
 
 def discover_packs(root: Path) -> Iterator[PackHandle]:
