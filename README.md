@@ -1,18 +1,42 @@
 # Minecraft Texture Extractor
 
-Outils pour extraire en masse des items depuis une collection de texture packs Minecraft (épées, overlays de ciel, etc.) et générer un mini resource pack autonome par item trouvé, prêt à être distribué (ex: "pack folder" de 1000+ overlays d'épées pour une vidéo YouTube).
+Outil pour extraire en masse des items depuis une collection de texture packs Minecraft (épées, arcs, armures, overlays de ciel, etc.) et générer un mini resource pack autonome par item trouvé, prêt à être distribué (ex: "pack folder" de 1000+ overlays d'épées pour une vidéo YouTube).
 
-Le repo contient deux scripts :
+## 🚀 Quick start
 
-- `ancienne version/Minecraft-Texture-Extractor.py` — ancienne version, conservée telle quelle, ne pas modifier. Ne traite que les épées en diamant, codée en dur.
-- `texture_extractor_v2/` — nouvelle version, à utiliser pour tout nouveau travail. Générique, basée sur des profils JSON, gère beaucoup plus de formats et de cas.
+**Le plus simple (sans rien installer)** : télécharge `MinecraftTextureExtractor.exe` depuis la page [Releases](https://github.com/JRinor/Minecraft-Texture-Extractor/releases), double-clique, choisis ton dossier de packs, coche les items, clique **Extraire**.
 
-## texture_extractor_v2
+**Avec Python** :
+
+```
+pip install -r requirements-gui.txt
+python gui.py
+```
+
+Ou en ligne de commande :
+
+```
+pip install -r requirements.txt
+python -m extractor.run --source "chemin/vers/tes/packs" --profiles sword bow
+```
+
+## Organisation du dépôt
+
+| Élément | Rôle |
+|---|---|
+| `gui.py` | Interface graphique (lance le moteur, éditeur de profils). |
+| `extractor/` | Le moteur (package Python). Point d'entrée : `python -m extractor.run`. |
+| `profiles/` | Profils JSON décrivant les items extractibles (+ `_schema.json`). |
+| `scripts/` | `lancer_gui.bat` (lancer la GUI), `build_exe.bat` (générer l'.exe). |
+| `tests/` | Tests unitaires (`pytest`). |
+| `legacy/` | Ancienne version mono-fichier (épée diamant codée en dur), conservée telle quelle. |
+
+## Moteur (`extractor/`)
 
 ### Installation
 
 ```
-pip install -r texture_extractor_v2/requirements.txt
+pip install -r requirements.txt
 ```
 
 - `Pillow` est obligatoire (génération du `pack.png`).
@@ -29,7 +53,7 @@ Pour ne pas taper de commandes, lance l'application :
 python gui.py
 ```
 
-(ou double-clic sur **`lancer_gui.bat`** sous Windows)
+(ou double-clic sur **`scripts/lancer_gui.bat`** sous Windows)
 
 L'interface est organisée en **3 étapes** : 1) dossier des packs, 2) items à cocher (rangés par catégorie, noms en français), 3) bouton **Extraire**. Elle propose notamment :
 
@@ -56,8 +80,8 @@ pip install tkinterdnd2
 Pour lancer/partager l'app **sans installer Python ni taper de commande**, génère un exécutable :
 
 ```
-pip install pyinstaller
-build_exe.bat
+pip install -r requirements-dev.txt
+scripts\build_exe.bat
 ```
 
 L'exécutable est créé dans `dist\MinecraftTextureExtractor.exe` (double-clic pour lancer). Les profils sont copiés à côté de l'exe au premier lancement et restent **modifiables** (onglet Profils).
@@ -65,7 +89,7 @@ L'exécutable est créé dans `dist\MinecraftTextureExtractor.exe` (double-clic 
 ### Utilisation en ligne de commande
 
 ```
-python texture_extractor_v2/run.py --source "chemin/vers/tes/packs" --profiles sword sky
+python -m extractor.run --source "chemin/vers/tes/packs" --profiles sword sky
 ```
 
 Arguments principaux :
@@ -91,7 +115,7 @@ Arguments principaux :
 Par défaut, chaque profil produit son propre dossier (`pack_folder_sword/`, `pack_folder_bow/`…) avec un zip par item. Un **combo** réunit au contraire plusieurs items dans un **seul** resource pack par pack source — par exemple l'épée *et* l'arc d'un même pack ensemble. On peut définir **plusieurs combos** en un seul lancement, et les combiner avec des profils séparés :
 
 ```
-python texture_extractor_v2/run.py --source "packs_source" \
+python -m extractor.run --source "packs_source" \
   --profiles sky \
   --combo "sword_bow=sword,bow" \
   --combo "pvp=sword,bow,potion,golden_apple" \
@@ -200,7 +224,7 @@ Pour ajouter un nouveau type d'item, il suffit d'ajouter un fichier `<id>.json` 
 
 Les noms de fichiers couvrent les conventions 1.8 (`items/`, `gold_`, `wood_`, `apple_golden`) et modernes (`item/`, `golden_`, `wooden_`) via des alias multiples.
 
-### Architecture du code (`texture_extractor_v2/`)
+### Architecture du code (`extractor/`)
 
 | Fichier | Rôle |
 |---|---|

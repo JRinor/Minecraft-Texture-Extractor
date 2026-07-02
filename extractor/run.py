@@ -29,14 +29,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from contact_sheet import build_contact_sheet
-from dedupe import DedupeStore, compute_unit_hash
-from matcher import find_matches
-from models import ItemProfile, MatchUnit, ProfileType
-from pack_discovery import SourceMeta, discover_packs_for_entry
-from packager import package_unit
-from profile_loader import ProfileError, load_profiles
-from reporter import ReportRow, Reporter
+from .contact_sheet import build_contact_sheet
+from .dedupe import DedupeStore, compute_unit_hash
+from .matcher import find_matches
+from .models import ItemProfile, MatchUnit, ProfileType
+from .pack_discovery import SourceMeta, discover_packs_for_entry
+from .packager import package_unit
+from .profile_loader import ProfileError, load_profiles
+from .reporter import ReportRow, Reporter
 
 logger = logging.getLogger("texture_extractor")
 

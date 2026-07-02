@@ -1,2 +1,20 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Normalisation des fins de ligne : LF dans le dépôt pour le texte.
+* text=auto eol=lf
+
+# Scripts Windows : garder les CRLF.
+*.bat text eol=crlf
+
+# Sources / docs : explicitement texte en LF.
+*.py   text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.yml  text eol=lf
+
+# Fichiers binaires : pas de conversion.
+*.png  binary
+*.jpg  binary
+*.zip  binary
+*.rar  binary
+*.7z   binary
+*.exe  binary

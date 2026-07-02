@@ -14,7 +14,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from models import MatchUnit
+from .models import MatchUnit
 
 logger = logging.getLogger(__name__)
 

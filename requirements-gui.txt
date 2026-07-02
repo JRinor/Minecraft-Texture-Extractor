@@ -1,0 +1,5 @@
+# Dépendances de l'interface graphique (gui.py).
+# Tkinter est inclus avec Python. tkinterdnd2 n'est nécessaire que pour le
+# glisser-déposer d'un dossier sur la fenêtre (facultatif).
+-r requirements.txt
+tkinterdnd2>=0.4

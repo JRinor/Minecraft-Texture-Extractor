@@ -6,7 +6,7 @@ import json
 import logging
 from pathlib import Path
 
-from models import Candidate, ItemProfile, ProfileType
+from .models import Candidate, ItemProfile, ProfileType
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +86,8 @@ def load_profiles(profiles_dir: Path, wanted_ids: list[str] | None = None) -> di
 
     profiles: dict[str, ItemProfile] = {}
     for json_file in sorted(profiles_dir.glob("*.json")):
+        if json_file.name.startswith("_"):
+            continue  # fichiers utilitaires (ex: _schema.json), pas des profils
         profile = load_profile_file(json_file)
         if profile.id in profiles:
             raise ProfileError(f"Profil dupliqué : {profile.id} ({json_file})")

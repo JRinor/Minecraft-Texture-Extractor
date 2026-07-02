@@ -35,14 +35,13 @@ else:
     BUNDLE_DIR = APP_DIR
 
 ROOT = APP_DIR
-RUN_PY = APP_DIR / "texture_extractor_v2" / "run.py"
 PROFILES_DIR = APP_DIR / "profiles"
 DEFAULT_SOURCE = APP_DIR / "packs_source"
 DEFAULT_DEST = APP_DIR / "packs_generes"
 CONFIG_PATH = APP_DIR / "gui_config.json"
 
-# Rend les modules du moteur importables (dev + figé)
-sys.path.insert(0, str(APP_DIR / "texture_extractor_v2"))
+# Rend le package `extractor` importable (dev + figé)
+sys.path.insert(0, str(APP_DIR))
 if FROZEN:
     sys.path.insert(0, str(BUNDLE_DIR))
 
@@ -106,6 +105,8 @@ def load_profiles_meta() -> dict[str, str]:
     out: dict[str, str] = {}
     if PROFILES_DIR.is_dir():
         for jf in sorted(PROFILES_DIR.glob("*.json")):
+            if jf.name.startswith("_"):
+                continue
             try:
                 data = json.loads(jf.read_text(encoding="utf-8"))
                 out[data["id"]] = data.get("display_name", data["id"])
@@ -402,6 +403,8 @@ class ExtractorGUI(_Base):
     def _editor_refresh(self) -> None:
         self.editor_list.delete(0, "end")
         for jf in sorted(PROFILES_DIR.glob("*.json")):
+            if jf.name.startswith("_"):
+                continue
             self.editor_list.insert("end", jf.stem)
 
     def _editor_load_selected(self, _e=None) -> None:
@@ -505,7 +508,7 @@ class ExtractorGUI(_Base):
         path = PROFILES_DIR / f"{pid}.json"
         try:
             path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-            from profile_loader import load_profile_file
+            from extractor.profile_loader import load_profile_file
             load_profile_file(path)
         except Exception as exc:
             self._editor_set_status(f"Profil refusé : {exc}", error=True)
@@ -683,7 +686,7 @@ class ExtractorGUI(_Base):
         if FROZEN:
             cmd = [sys.executable, "--extract-cli"]
         else:
-            cmd = [sys.executable, "-u", str(RUN_PY)]
+            cmd = [sys.executable, "-u", "-m", "extractor.run"]
         cmd += ["--source", source, "--dest-root", dest, "--profiles-dir", str(PROFILES_DIR),
                 "--workers", str(self.workers_var.get())]
         if selected:
@@ -866,7 +869,7 @@ class ExtractorGUI(_Base):
         sheet = folder_path / "contact_sheet.png"
         if not sheet.is_file():
             try:
-                from contact_sheet import build_contact_sheet
+                from extractor.contact_sheet import build_contact_sheet
                 if build_contact_sheet(folder_path) is None:
                     messagebox.showinfo("Aperçu", "Aucune icône trouvée dans ce dossier.")
                     return
@@ -957,9 +960,12 @@ def _maybe_run_cli() -> bool:
     """Si lancé avec --extract-cli (cas de l'exécutable figé), agit comme le
     moteur en ligne de commande et retourne True."""
     if "--extract-cli" in sys.argv:
-        sys.argv.remove("--extract-cli")
-        from run import main as run_main
-        sys.exit(run_main(sys.argv[1:]))
+        # Tout ce qui suit le marqueur = les arguments du moteur (robuste au
+        # décalage de sys.argv constaté dans l'exécutable figé).
+        idx = sys.argv.index("--extract-cli")
+        args = sys.argv[idx + 1:]
+        from extractor.run import main as run_main
+        sys.exit(run_main(args))
     return False
 
 

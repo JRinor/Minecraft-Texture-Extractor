@@ -1,12 +1,11 @@
 @echo off
 REM Construit un executable autonome MinecraftTextureExtractor.exe dans dist\
-cd /d "%~dp0"
+REM (se place a la racine du projet, quel que soit l'endroit d'ou on lance).
+cd /d "%~dp0.."
 python -m PyInstaller --noconfirm --onefile --windowed --name MinecraftTextureExtractor ^
   --collect-all tkinterdnd2 ^
-  --paths texture_extractor_v2 ^
-  --hidden-import run --hidden-import matcher --hidden-import models ^
-  --hidden-import dedupe --hidden-import packager --hidden-import profile_loader ^
-  --hidden-import reporter --hidden-import pack_discovery --hidden-import contact_sheet ^
+  --collect-submodules extractor ^
+  --paths . ^
   --add-data "profiles;profiles" ^
   gui.py
 echo.

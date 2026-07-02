@@ -1,0 +1,4 @@
+# Dépendances de développement (tests, build de l'exécutable).
+-r requirements-gui.txt
+pytest>=8.0
+pyinstaller>=6.0

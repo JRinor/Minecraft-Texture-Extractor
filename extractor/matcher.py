@@ -15,8 +15,8 @@ import posixpath
 import re
 from typing import Optional
 
-from models import FoundFile, ItemProfile, MatchUnit, normalize_name
-from pack_discovery import PackHandle
+from .models import FoundFile, ItemProfile, MatchUnit, normalize_name
+from .pack_discovery import PackHandle
 
 logger = logging.getLogger(__name__)
 

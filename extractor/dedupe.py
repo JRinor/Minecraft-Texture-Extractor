@@ -7,7 +7,7 @@ from __future__ import annotations
 import hashlib
 import threading
 
-from models import MatchUnit
+from .models import MatchUnit
 
 
 def compute_unit_hash(unit: MatchUnit) -> str:

@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/JRinor/Minecraft-Texture-Extractor/profiles/_schema.json",
+  "title": "Profil d'extraction d'item",
+  "description": "Décrit un type d'item à extraire. Voir le README, section « Profils ».",
+  "type": "object",
+  "required": ["id", "type"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "description": "Identifiant unique (= nom du fichier <id>.json)."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["simple", "set", "group"],
+      "description": "simple = un fichier ; set = un fichier ancre + compagnons ; group = ancre .properties qui référence d'autres fichiers."
+    },
+    "display_name": { "type": "string" },
+    "output_prefix": { "type": "string" },
+    "pack_description": { "type": "string" },
+    "candidates": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Noms de fichiers acceptés (types simple et set). Alias multiples possibles."
+    },
+    "companions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Type set : fichiers à récupérer en plus. Nom simple = même dossier ; chemin avec / ou glob = ailleurs dans le pack."
+    },
+    "path_hints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Le chemin du fichier trouvé doit contenir au moins un de ces sous-textes."
+    },
+    "anchor_glob": {
+      "type": "string",
+      "description": "Type group : motif glob (relatif à assets/) du fichier ancre."
+    },
+    "reference_keys": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Type group : clés à chercher dans l'ancre (ex: source matche source=, source0=…)."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "simple" } } },
+      "then": { "required": ["candidates"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "set" } } },
+      "then": { "required": ["candidates"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "group" } } },
+      "then": { "required": ["anchor_glob", "reference_keys"] }
+    }
+  ]
+}
